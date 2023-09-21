@@ -3,12 +3,6 @@ import { validateSync } from 'class-validator';
 
 import { EnvironmentVariablesInterface } from '@common/interfaces';
 
-export const getEnvFile = () => {
-  const env = process.env.NODE_ENV || 'development';
-
-  return `.${env}.env`;
-};
-
 export const validateEnvVariables = <T extends EnvironmentVariablesInterface>(
   EnvironmentVariables: ClassConstructor<T>,
   config: Record<string, unknown>,

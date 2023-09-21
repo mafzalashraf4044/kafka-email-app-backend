@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 
-import { getEnvFile, validateEnvVariables } from '@common/utils';
+import { validateEnvVariables } from '@common/utils';
 import configuration from './config.service';
 import EnvironmentVariables from './config.validator';
 
@@ -14,7 +14,7 @@ import EnvironmentVariables from './config.validator';
       },
       load: [async () => configuration()],
       isGlobal: true,
-      envFilePath: getEnvFile(),
+      envFilePath: '.env',
     }),
   ],
   exports: [NestConfigModule],

@@ -1,14 +1,15 @@
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 
-import AdminEntity from '@modules/admin/admin.entity';
-import { ModelRepository } from '@swiq/common/repositories';
+import { ModelRepository } from '@common/database/repositories';
+
+import BulkEmailJobEntity from './bulk-email-job.entity';
 
 @Injectable()
-class AdminRepository extends ModelRepository<AdminEntity> {
+class BulkEmailJobRepository extends ModelRepository<BulkEmailJobEntity> {
   constructor(private dataSource: DataSource) {
-    super(AdminEntity, dataSource.createEntityManager());
+    super(BulkEmailJobEntity, dataSource.createEntityManager());
   }
 }
 
-export default AdminRepository;
+export default BulkEmailJobRepository;

@@ -1,15 +1,10 @@
-import { IsEnum, IsNumber, IsString, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty } from 'class-validator';
 
-import { Environment } from '@swiq/common/enums';
-import { EnvironmentVariablesInterface } from '@swiq/common/interfaces';
+import { EnvironmentVariablesInterface } from '@common/interfaces';
 
 export default class EnvironmentVariables
   implements EnvironmentVariablesInterface
 {
-  @IsEnum(Environment)
-  @IsNotEmpty()
-  NODE_ENV: Environment;
-
   @IsNumber()
   @IsNotEmpty()
   PORT: number;

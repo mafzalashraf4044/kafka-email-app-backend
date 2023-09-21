@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { BulkEmailJobService } from './bulk-email-job.service';
+import BulkEmailJobService from './bulk-email-job.service';
 
 @Controller()
 export default class BulkEmailJobController {

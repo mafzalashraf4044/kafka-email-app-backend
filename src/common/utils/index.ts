@@ -1,1 +1,2 @@
-export * from './config.util';
+export * from './config.utils';
+export * from './mysql.utils';

@@ -1,11 +1,10 @@
 import { join } from 'path';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { PgSQLConnectionConfig } from '../interfaces/config.interface';
-import { Environment } from '../enums/config.enum';
-import { MISSING_PG_SQL_ENV_VARIABLES } from '../errors/config.errors';
+import { MySQLConnectionConfig } from '@common/interfaces';
+import { MISSING_MY_SQL_ENV_VARIABLES } from '@common/errors';
 
-export const parsePgSQLConnectionConfigFromEnv = (): PgSQLConnectionConfig => {
+export const parseMySQLConnectionConfigFromEnv = (): MySQLConnectionConfig => {
   if (
     !process.env['DATABASE_HOST'] ||
     !process.env['DATABASE_PORT'] ||
@@ -13,7 +12,7 @@ export const parsePgSQLConnectionConfigFromEnv = (): PgSQLConnectionConfig => {
     !process.env['DATABASE_PASSWORD'] ||
     !process.env['DATABASE_NAME']
   ) {
-    throw new Error(MISSING_PG_SQL_ENV_VARIABLES);
+    throw new Error(MISSING_MY_SQL_ENV_VARIABLES);
   }
 
   return {
@@ -26,19 +25,18 @@ export const parsePgSQLConnectionConfigFromEnv = (): PgSQLConnectionConfig => {
 };
 
 export const getTypeOrmOptions = (
-  env: Environment,
-  config: PgSQLConnectionConfig,
+  config: MySQLConnectionConfig,
 ): TypeOrmModuleOptions => {
   const options = {
     ...config,
-    type: 'postgres' as any,
+    type: 'mysql' as any,
     entities: [join(__dirname + '/**/*.entity{.js,.ts}')],
     autoLoadEntities: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
     keepConnectionAlive: true,
-    synchronize: env === 'development',
-    logging: false,
+    synchronize: true,
+    logging: true,
   };
 
   return options;

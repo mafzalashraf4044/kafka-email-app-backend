@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { PgSQLConnectionConfig } from '@swiq/common/interfaces';
-import { getTypeOrmOptions } from '@swiq/common/utils';
+import { MySQLConnectionConfig } from '@common/interfaces';
+import { getTypeOrmOptions } from '@common/utils';
 
 @Injectable()
 export class TypeOrmService implements TypeOrmOptionsFactory {
-  private config: PgSQLConnectionConfig;
+  private config: MySQLConnectionConfig;
 
   constructor(private configService: ConfigService) {
     this.config = {
@@ -22,8 +22,6 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
   }
 
   async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
-    const env = this.configService.get('env');
-
-    return getTypeOrmOptions(env, this.config);
+    return getTypeOrmOptions(this.config);
   }
 }

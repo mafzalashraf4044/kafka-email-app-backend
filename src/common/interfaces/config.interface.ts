@@ -14,14 +14,3 @@ export interface MySQLConnectionConfig {
   password: string;
   database: string;
 }
-
-interface KafkaConnectionSASLConfig {
-  mechanism: string;
-  username: string;
-  password: string;
-}
-
-export interface KafkaClientConfig {
-  broker: string;
-  sasl?: KafkaConnectionSASLConfig;
-}

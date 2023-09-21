@@ -8,9 +8,7 @@ import { resolve } from 'path';
 import * as dotenv from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-import User from '@modules/user/user.entity';
-import Member from '@modules/member/member.entity';
-import Admin from '@modules/admin/admin.entity';
+import BulkEmailJob from '@modules/bulk-email-job/bulk-email-job.entity';
 
 const getParsedConfig = () => {
   const path = `${process.cwd()}/`;
@@ -27,13 +25,13 @@ function loadDataSourceConfig(): DataSourceOptions {
   const config = getParsedConfig();
 
   return {
-    type: 'postgres',
+    type: 'mysql',
     host: config.DATABASE_HOST,
     port: parseInt(config.DATABASE_PORT, 10),
     username: config.DATABASE_USERNAME,
     password: config.DATABASE_PASSWORD,
     database: config.DATABASE_NAME,
-    entities: [User, Member, Admin],
+    entities: [BulkEmailJob],
     migrations: ['./src/migrations/*.ts'],
   };
 }
