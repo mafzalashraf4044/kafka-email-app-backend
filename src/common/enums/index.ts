@@ -1,1 +1,1 @@
-export * from './bulk-email-job.enum';
+export * from './bulk-email-job.enums';

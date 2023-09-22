@@ -2,9 +2,7 @@ import { IsNumber, IsString, IsNotEmpty } from 'class-validator';
 
 import { EnvironmentVariablesInterface } from '@common/interfaces';
 
-export default class EnvironmentVariables
-  implements EnvironmentVariablesInterface
-{
+export default class EnvironmentVariables implements EnvironmentVariablesInterface {
   @IsNumber()
   @IsNotEmpty()
   PORT: number;
@@ -28,4 +26,8 @@ export default class EnvironmentVariables
   @IsString()
   @IsNotEmpty()
   DATABASE_NAME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  KAFKA_BROKER: string;
 }

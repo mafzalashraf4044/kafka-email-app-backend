@@ -14,3 +14,12 @@ export interface MySQLConnectionConfig {
   password: string;
   database: string;
 }
+
+export interface Config {
+  port: number;
+
+  /** Database connection details. */
+  db: MySQLConnectionConfig;
+
+  kafka: string;
+}

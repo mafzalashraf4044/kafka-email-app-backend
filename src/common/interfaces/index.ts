@@ -1,1 +1,2 @@
-export * from './config.interface';
+export * from './config.interfaces';
+export * from './kafka.interfaces';

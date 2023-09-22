@@ -1,14 +1,17 @@
 import { Module, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { KafkaModule } from '@kafka/kafka.module';
+
 import BulkEmailJobEntity from './bulk-email-job.entity';
 import BulkEmailJobController from './bulk-email-job.controller';
 import BulkEmailJobService from './bulk-email-job.service';
+import BulkEmailJobConsumer from './bulk-email-job.consumer';
 
 @Module({
   controllers: [BulkEmailJobController],
-  providers: [BulkEmailJobService, Logger],
-  imports: [TypeOrmModule.forFeature([BulkEmailJobEntity])],
+  providers: [BulkEmailJobService, BulkEmailJobConsumer, Logger],
+  imports: [TypeOrmModule.forFeature([BulkEmailJobEntity]), KafkaModule],
   exports: [TypeOrmModule],
 })
 export default class BulkEmailJobModule {}
