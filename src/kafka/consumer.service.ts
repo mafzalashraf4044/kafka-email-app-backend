@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { IConsumer, KafkajsConsumerOptions } from '@common/interfaces';
+import { IConsumer, KafkaConsumerOptions } from '@common/interfaces';
 import { KafkaConsumer } from './kafka.consumer';
 
 @Injectable()
@@ -10,14 +10,14 @@ export class ConsumerService implements OnApplicationShutdown {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async consume({ topic, config, onMessage }: KafkajsConsumerOptions) {
+  async consume({ topic, config, onMessage, onError }: KafkaConsumerOptions) {
     const consumer = new KafkaConsumer(
       topic,
       config,
       this.configService.get('kafka'),
     );
     await consumer.connect();
-    await consumer.consume(onMessage);
+    await consumer.consume(onMessage, onError);
     this.consumers.push(consumer);
   }
 

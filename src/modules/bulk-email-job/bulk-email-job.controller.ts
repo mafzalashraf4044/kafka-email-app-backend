@@ -1,7 +1,9 @@
-import { Controller, Get, Post } from '@nestjs/common';
-import BulkEmailJobService from './bulk-email-job.service';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 
-@Controller()
+import BulkEmailJobService from './bulk-email-job.service';
+import { SendEmailsDTO } from './dto';
+
+@Controller('bulk-email-job')
 export default class BulkEmailJobController {
   constructor(private readonly bulkEmailJobService: BulkEmailJobService) {}
 
@@ -13,5 +15,10 @@ export default class BulkEmailJobController {
   @Post()
   postMessage(): Promise<boolean> {
     return this.bulkEmailJobService.postMessage();
+  }
+
+  @Post('send-emails')
+  sendEmails(@Body() sendEmailsDTO: SendEmailsDTO): Promise<string> {
+    return this.bulkEmailJobService.sendEmails(sendEmailsDTO.numberOfEmails);
   }
 }

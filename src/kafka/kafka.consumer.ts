@@ -26,7 +26,10 @@ export class KafkaConsumer implements IConsumer {
     this.logger = new Logger(`consumer => ${topic.topic} => ${config.groupId}`);
   }
 
-  async consume(onMessage: (message: KafkaMessage) => Promise<void>) {
+  async consume(
+    onMessage: (message: KafkaMessage) => Promise<void>,
+    onError: (message: KafkaMessage) => Promise<void>,
+  ) {
     await this.consumer.subscribe(this.topic);
     await this.consumer.run({
       eachMessage: async ({ message, partition }) => {
@@ -43,14 +46,10 @@ export class KafkaConsumer implements IConsumer {
         } catch (err) {
           this.logger.error('Error consuming message.', err);
 
-          await this.addMessageToDlq(message);
+          onError(message);
         }
       },
     });
-  }
-
-  private async addMessageToDlq(message: KafkaMessage) {
-    // TODO: add the message to dead letter queue table in database
   }
 
   async connect() {
