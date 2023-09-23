@@ -14,6 +14,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: false, // this should be true, but for some
       transform: true,
+      transformOptions: { enableImplicitConversion: true },
     }),
   );
 

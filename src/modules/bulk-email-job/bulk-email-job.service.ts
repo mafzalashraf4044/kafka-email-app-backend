@@ -28,8 +28,9 @@ export default class BulkEmailJobService {
     });
   }
 
-  getHello(): string {
-    return 'Hello World!';
+  getAll(skip: number, take: number): Promise<BulkEmailJob[]> {
+    const options = { query: {}, skip, take };
+    return this.bulkEmailJobRepository.getEntities(options);
   }
 
   async postMessage(): Promise<boolean> {

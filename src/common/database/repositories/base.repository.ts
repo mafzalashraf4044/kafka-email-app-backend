@@ -4,12 +4,14 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 export class ModelRepository<T> extends Repository<T> {
   async getEntities(
-    query: any,
+    options: { query: any; skip: number; take: number },
     relations: string[] = [],
     throwsException = false,
   ): Promise<T[] | null> {
     return await this.find({
-      where: { ...query },
+      where: { ...options.query },
+      skip: options.skip,
+      take: options.take,
       relations,
     })
       .then(entity => {

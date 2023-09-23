@@ -14,12 +14,15 @@ export class KafkaProducer implements IProducer {
       brokers: [broker],
     });
     this.producer = this.kafka.producer();
-    this.logger = new Logger(`producer => ${topic}`);
+    this.logger = new Logger(`kafka.producer => ${topic}`);
   }
 
   async produce(message: Message) {
     await this.producer.send({ topic: this.topic, messages: [message] });
-    this.logger.debug(`Messsage sent to topic ${this.topic}`, message);
+    this.logger.debug(
+      `Messsage sent to topic ${this.topic}`,
+      JSON.stringify(message),
+    );
   }
 
   async connect() {
