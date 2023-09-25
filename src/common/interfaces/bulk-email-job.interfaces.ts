@@ -5,3 +5,12 @@ export interface BulkEmailJob {
   status: JobStatus;
   jobId: string;
 }
+
+export interface GetBulkEmailJobsResponse {
+  count: number;
+  data: BulkEmailJob[];
+};
+
+export interface CreateBulkEmailJobResponse {
+  jobId: string;
+};

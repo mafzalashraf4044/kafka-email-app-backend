@@ -1,4 +1,4 @@
-export { default as SendEmailsDTO } from './send-emails.dto';
+export { default as CreateBulkEmailJobDTO } from './create-bulk-email-job.dto';
 export {
   PaginationRequestDTO,
   PaginationTransformPipe,

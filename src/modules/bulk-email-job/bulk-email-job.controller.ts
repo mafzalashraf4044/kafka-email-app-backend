@@ -1,10 +1,13 @@
 import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 
-import { BulkEmailJob } from '@common/interfaces';
+import {
+  GetBulkEmailJobsResponse,
+  CreateBulkEmailJobResponse,
+} from '@common/interfaces';
 
 import BulkEmailJobService from './bulk-email-job.service';
 import {
-  SendEmailsDTO,
+  CreateBulkEmailJob,
   PaginationRequestDTO,
   PaginationTransformPipe,
 } from './dto';
@@ -16,17 +19,14 @@ export default class BulkEmailJobController {
   @Get()
   getAll(
     @Query(new PaginationTransformPipe()) pagination: PaginationRequestDTO,
-  ): Promise<BulkEmailJob[]> {
+  ): Promise<GetBulkEmailJobsResponse> {
     return this.bulkEmailJobService.getAll(pagination.skip, pagination.take);
   }
 
   @Post()
-  postMessage(): Promise<boolean> {
-    return this.bulkEmailJobService.postMessage();
-  }
-
-  @Post('send-emails')
-  sendEmails(@Body() sendEmailsDTO: SendEmailsDTO): Promise<string> {
-    return this.bulkEmailJobService.sendEmails(sendEmailsDTO.numberOfEmails);
+  create(
+    @Body() createBulkEmailJob: CreateBulkEmailJob,
+  ): Promise<CreateBulkEmailJobResponse> {
+    return this.bulkEmailJobService.create(createBulkEmailJob.numberOfEmails);
   }
 }

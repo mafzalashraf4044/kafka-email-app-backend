@@ -3,6 +3,7 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { JobStatus } from '@common/enums';
 import { ConsumerService } from '@kafka/consumer.service';
 import { CONSUMER_GROUPS, TOPICS } from '@common/constants';
+import { WebSocketGateway } from '@gateway/websocket.gateway';
 
 import BulkEmailJobService from './bulk-email-job.service';
 
@@ -13,6 +14,7 @@ export default class BulkEmailJobConsumer implements OnModuleInit {
   constructor(
     private readonly consumerService: ConsumerService,
     private readonly bulkEmailJobService: BulkEmailJobService,
+    private readonly webSocketGateway: WebSocketGateway,
   ) {
     this.logger = new Logger('bulk-email-job.consumer');
   }
@@ -30,7 +32,7 @@ export default class BulkEmailJobConsumer implements OnModuleInit {
 
         await this.bulkEmailJobService.updateStatus(id, JobStatus.Completed);
 
-        throw new Error();
+        this.webSocketGateway.broadcastEvent('test', {});
       },
       onError: async message => {
         const id = Number(message.value.toString());

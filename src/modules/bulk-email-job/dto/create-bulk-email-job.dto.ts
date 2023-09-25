@@ -2,11 +2,11 @@
 
 import { IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
-class SendEmailsDTO {
+class CreateBulkEmailJobDTO {
   @IsNumber()
   @IsPositive()
   @IsNotEmpty()
   numberOfEmails: number;
 }
 
-export default SendEmailsDTO;
+export default CreateBulkEmailJobDTO;

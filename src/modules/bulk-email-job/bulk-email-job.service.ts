@@ -1,13 +1,27 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { plainToClass } from 'class-transformer';
 
 import { JobStatus } from '@common/enums';
-import { BulkEmailJob } from '@common/interfaces';
+import {
+  BulkEmailJob,
+  GetBulkEmailJobsResponse,
+  CreateBulkEmailJobResponse,
+} from '@common/interfaces';
 import { ProducerService } from '@kafka/producer.service';
 import BulkEmailJobEntity from './bulk-email-job.entity';
 import BulkEmailJobRepository from './bulk-email-job.repository';
-import { TOPICS } from '@common/constants';
+import {
+  TOPICS,
+  UNABLE_TO_GET_BULK_EMAIL_JOBS,
+  UNABLE_TO_CREATE_BULK_EMAIL_JOBS,
+  UNABLE_TO_UPDATE_BULK_EMAIL_JOBS,
+} from '@common/constants';
 
 @Injectable()
 export default class BulkEmailJobService {
@@ -28,26 +42,41 @@ export default class BulkEmailJobService {
     });
   }
 
-  getAll(skip: number, take: number): Promise<BulkEmailJob[]> {
-    const options = { query: {}, skip, take };
-    return this.bulkEmailJobRepository.getEntities(options);
-  }
+  /**
+   * Retrieve a list of bulk email jobs with pagination.
+   *
+   * @param {number} skip The number of records to skip.
+   * @param {number} take The maximum number of records to retrieve.
+   * @returns {Promise<GetBulkEmailJobsResponse>} A promise that resolves to an object containing the count of total records and the retrieved bulk email job data.
+   * @memberof BulkEmailJobService
+   */
+  async getAll(skip: number, take: number): Promise<GetBulkEmailJobsResponse> {
+    try {
+      const options = { query: {}, skip, take };
 
-  async postMessage(): Promise<boolean> {
-    await this.producerService.produce('test', {
-      value: 'Hello World',
-    });
-    return true;
+      const [count, data] = await Promise.all([
+        this.bulkEmailJobRepository.count(),
+        this.bulkEmailJobRepository.getEntities(options),
+      ]);
+
+      return {
+        count,
+        data,
+      };
+    } catch (error) {
+      this.logger.error('getAll', error);
+      throw new InternalServerErrorException(UNABLE_TO_GET_BULK_EMAIL_JOBS);
+    }
   }
 
   /**
-   * Create a new user in user table
+   * Create a new bulk email job entity
    *
-   * @param {SignupRequest} signupRequest payload for creating a new user
-   * @returns {Promise<UserEntity>} The created user record.
-   * @memberof UsersService
+   * @param {number} numberOfEmails The number of emails to be sent.
+   * @returns {Promise<CreateBulkEmailJobResponse>} A promise that resolves to the response of the bulk email job creation.
+   * @memberof BulkEmailJobService
    */
-  async sendEmails(numberOfEmails: number): Promise<string> {
+  async create(numberOfEmails: number): Promise<CreateBulkEmailJobResponse> {
     try {
       const jobId = uuidv4();
 
@@ -65,22 +94,31 @@ export default class BulkEmailJobService {
         value: bulkEmailJob.id.toString(),
       });
 
-      return bulkEmailJob.jobId;
-    } catch (err) {
-      throw err;
+      return {
+        jobId: bulkEmailJob.jobId,
+      };
+    } catch (error) {
+      this.logger.error('create', error);
+      throw new InternalServerErrorException(UNABLE_TO_CREATE_BULK_EMAIL_JOBS);
     }
   }
 
   /**
-   * Create a new user in user table
+   * Update the status of a bulk email job.
    *
-   * @param {SignupRequest} signupRequest payload for creating a new user
-   * @returns {Promise<UserEntity>} The created user record.
-   * @memberof UsersService
+   * @param {number} id The unique identifier of the bulk email job.
+   * @param {JobStatus} status The new status to set for the bulk email job.
+   * @returns {Promise<BulkEmailJob>} A promise that resolves to the updated bulk email job with the new status.
+   * @memberof BulkEmailJobService
    */
   async updateStatus(id: number, status: JobStatus): Promise<BulkEmailJob> {
     try {
       const bulkEmailJob = await this.bulkEmailJobRepository.getEntityById(id);
+
+      if (!bulkEmailJob) {
+        // Throw a NotFoundException when the entity is not found.
+        throw new NotFoundException(`Bulk email job with ID ${id} not found`);
+      }
 
       const bulkEmailJobAfterUpdate =
         await this.bulkEmailJobRepository.updateEntity(bulkEmailJob, {
@@ -88,8 +126,9 @@ export default class BulkEmailJobService {
         });
 
       return bulkEmailJobAfterUpdate;
-    } catch (err) {
-      throw err;
+    } catch (error) {
+      this.logger.error('updateStatus', error);
+      throw new InternalServerErrorException(UNABLE_TO_UPDATE_BULK_EMAIL_JOBS);
     }
   }
 }

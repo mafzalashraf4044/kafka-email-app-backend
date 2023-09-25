@@ -2,6 +2,7 @@ import { Module, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { KafkaModule } from '@kafka/kafka.module';
+import { WebSocketGateway } from '@gateway/websocket.gateway';
 
 import BulkEmailJobEntity from './bulk-email-job.entity';
 import BulkEmailJobController from './bulk-email-job.controller';
@@ -12,6 +13,7 @@ import BulkEmailJobConsumer from './bulk-email-job.consumer';
 @Module({
   controllers: [BulkEmailJobController],
   providers: [
+    WebSocketGateway,
     BulkEmailJobService,
     BulkEmailJobConsumer,
     BulkEmailJobRepository,

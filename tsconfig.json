@@ -23,6 +23,7 @@
       "@config/*": ["config/*"],
       "@database/*": ["database/*"],
       "@kafka/*": ["kafka/*"],
+      "@gateway/*": ["gateway/*"],
       "@modules/*": ["modules/*"]
     }
   }

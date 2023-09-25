@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { HttpExceptionFilter } from '@common/filters';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,6 +19,10 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.enableCors();
 
   await app.listen(port);
 
