@@ -7,21 +7,24 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { plainToClass } from 'class-transformer';
 
+import {
+  UNABLE_TO_GET_BULK_EMAIL_JOBS,
+  UNABLE_TO_CREATE_BULK_EMAIL_JOBS,
+  UNABLE_TO_UPDATE_BULK_EMAIL_JOBS,
+  UNABLE_TO_GET_SENT_EMAILS_COUNT,
+} from '@common/errors';
 import { JobStatus } from '@common/enums';
 import {
   BulkEmailJob,
   GetBulkEmailJobsResponse,
   CreateBulkEmailJobResponse,
+  GetSentEmailsCountResponse,
 } from '@common/interfaces';
 import { ProducerService } from '@kafka/producer.service';
+import { TOPICS } from '@common/constants';
+
 import BulkEmailJobEntity from './bulk-email-job.entity';
 import BulkEmailJobRepository from './bulk-email-job.repository';
-import {
-  TOPICS,
-  UNABLE_TO_GET_BULK_EMAIL_JOBS,
-  UNABLE_TO_CREATE_BULK_EMAIL_JOBS,
-  UNABLE_TO_UPDATE_BULK_EMAIL_JOBS,
-} from '@common/constants';
 
 @Injectable()
 export default class BulkEmailJobService {
@@ -120,15 +123,39 @@ export default class BulkEmailJobService {
         throw new NotFoundException(`Bulk email job with ID ${id} not found`);
       }
 
-      const bulkEmailJobAfterUpdate =
-        await this.bulkEmailJobRepository.updateEntity(bulkEmailJob, {
-          status,
-        });
+      await this.bulkEmailJobRepository.updateEntity(bulkEmailJob, {
+        status,
+      });
 
-      return bulkEmailJobAfterUpdate;
+      bulkEmailJob.status = status;
+
+      return bulkEmailJob;
     } catch (error) {
       this.logger.error('updateStatus', error);
       throw new InternalServerErrorException(UNABLE_TO_UPDATE_BULK_EMAIL_JOBS);
+    }
+  }
+
+  /**
+   * Retrieve the total count of sent emails.
+   *
+   * @returns {Promise<number>} A promise that resolves to the total count of sent emails.
+   * @memberof BulkEmailJobService
+   */
+  async getSentEmailsCount(): Promise<GetSentEmailsCountResponse> {
+    try {
+      const count = await this.bulkEmailJobRepository
+        .createQueryBuilder('bulk_email_job')
+        .select('SUM(numberOfEmails)', 'total')
+        .where('status = :status', { status: JobStatus.Completed })
+        .getRawOne();
+
+      return {
+        count: count.total || 0,
+      };
+    } catch (error) {
+      this.logger.error('getSentEmailsCount', error);
+      throw new InternalServerErrorException(UNABLE_TO_GET_SENT_EMAILS_COUNT);
     }
   }
 }

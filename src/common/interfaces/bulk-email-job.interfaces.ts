@@ -14,3 +14,7 @@ export interface GetBulkEmailJobsResponse {
 export interface CreateBulkEmailJobResponse {
   jobId: string;
 };
+
+export interface GetSentEmailsCountResponse {
+  count: number;
+};

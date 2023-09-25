@@ -1,8 +1,9 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 
+import { wait } from '@common/utils';
 import { JobStatus } from '@common/enums';
 import { ConsumerService } from '@kafka/consumer.service';
-import { CONSUMER_GROUPS, TOPICS } from '@common/constants';
+import { CONSUMER_GROUPS, TOPICS, EVENTS } from '@common/constants';
 import { WebSocketGateway } from '@gateway/websocket.gateway';
 
 import BulkEmailJobService from './bulk-email-job.service';
@@ -28,11 +29,17 @@ export default class BulkEmailJobConsumer implements OnModuleInit {
 
         this.logger.debug(`Bulk Email Job Message Consumed => id = ${id}`);
 
-        // TODO: Logic for sending the email needs to be implemented
+        // TODO: Logic for sending the email needs to be implemented here
+        await wait(5000);
 
-        await this.bulkEmailJobService.updateStatus(id, JobStatus.Completed);
+        const updatedBulkEmailJob = await this.bulkEmailJobService.updateStatus(
+          id,
+          JobStatus.Completed,
+        );
 
-        this.webSocketGateway.broadcastEvent('test', {});
+        this.webSocketGateway.broadcastEvent(EVENTS.BULK_EMAIL_JOB_COMPLETED, {
+          ...updatedBulkEmailJob,
+        });
       },
       onError: async message => {
         const id = Number(message.value.toString());

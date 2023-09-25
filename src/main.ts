@@ -6,6 +6,8 @@ import { HttpExceptionFilter } from '@common/filters';
 
 import { AppModule } from './app.module';
 
+process.env.TZ = 'Etc/UTC';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

@@ -3,11 +3,12 @@ import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import {
   GetBulkEmailJobsResponse,
   CreateBulkEmailJobResponse,
+  GetSentEmailsCountResponse,
 } from '@common/interfaces';
 
 import BulkEmailJobService from './bulk-email-job.service';
 import {
-  CreateBulkEmailJob,
+  CreateBulkEmailJobDTO,
   PaginationRequestDTO,
   PaginationTransformPipe,
 } from './dto';
@@ -25,8 +26,13 @@ export default class BulkEmailJobController {
 
   @Post()
   create(
-    @Body() createBulkEmailJob: CreateBulkEmailJob,
+    @Body() createBulkEmailJob: CreateBulkEmailJobDTO,
   ): Promise<CreateBulkEmailJobResponse> {
     return this.bulkEmailJobService.create(createBulkEmailJob.numberOfEmails);
+  }
+
+  @Get('sent-emails-count')
+  getSentEmailsCount(): Promise<GetSentEmailsCountResponse> {
+    return this.bulkEmailJobService.getSentEmailsCount();
   }
 }
