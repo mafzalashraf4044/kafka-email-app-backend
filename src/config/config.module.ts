@@ -13,7 +13,7 @@ import EnvironmentVariables from './config.validator';
       validate: (config: Record<string, unknown>) => {
         return validateEnvVariables(EnvironmentVariables, config);
       },
-      load: [async () => configuration()],
+      load: [() => configuration()],
       isGlobal: true,
       envFilePath: '.env',
     }),

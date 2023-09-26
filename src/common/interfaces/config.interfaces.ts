@@ -5,6 +5,7 @@ export interface EnvironmentVariablesInterface {
   DATABASE_USERNAME: string;
   DATABASE_PASSWORD: string;
   DATABASE_NAME: string;
+  KAFKA_BROKER: string;
 }
 
 export interface MySQLConnectionConfig {

@@ -94,6 +94,7 @@ export default class BulkEmailJobService {
       );
 
       await this.producerService.produce(TOPICS.BULK_EMAIL_JOB, {
+        key: 'id',
         value: bulkEmailJob.id.toString(),
       });
 

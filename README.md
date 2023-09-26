@@ -25,7 +25,7 @@ Follow these steps to set up and run the applicatioClone the repository from Git
    ```bash
    docker-compose up --build
    ```
-4. The application will be accessible at [http://localhost:3003](http://localhost:3003/).
+4. The application will be accessible at [http://localhost:3003](http://localhost:3003/). kafka-ui will be available at [http://localhost:8080](http://localhost:8080/).
 
 ## Docker Compose Configuration
 
